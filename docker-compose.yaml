@@ -1,0 +1,70 @@
+version: "3"
+services:
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6380:6379"
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+      POSTGRES_PASSWORD: null
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - ../auth/database/data:/var/lib/postgresql/data
+
+  migration:
+    # restart: always
+    build:
+      context: ../auth
+      dockerfile: Dockerfile.migrations
+    depends_on:
+      - db
+      - redis
+    # command: npx sequelize-cli db:migrate
+    environment:
+      DB_HOST: db
+      DB_USER: postgres
+      DB_PASSWORD: null
+      DB_NAME: postgres
+      DB_PORT: 5432
+      NODE_ENV: docker
+    
+  server:
+    build: 
+      context: ../auth
+      args:
+        - no_cache=1
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "5501:5501"
+    environment:
+      DB_HOST: db
+      DB_USER: postgres
+      DB_PASSWORD: null
+      DB_NAME: postgres
+      DB_PORT: 5432
+      NODE_ENV: docker
+
+  # backend:
+  #   build: 
+  #     context: ../backend
+  #     args:
+  #       - no_cache=1
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "4000:4000"
+
+  #   volumes:
+  #     - ../backend:/app/
+
+    
