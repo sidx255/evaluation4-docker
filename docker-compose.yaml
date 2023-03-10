@@ -55,16 +55,16 @@ services:
       DB_PORT: 5432
       NODE_ENV: docker
 
-  # backend:
-  #   build: 
-  #     context: ../backend
-  #     args:
-  #       - no_cache=1
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "4000:4000"
+  backend:
+    build: 
+      context: ../backend
+      args:
+        - no_cache=1
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
 
-  #   volumes:
-  #     - ../backend:/app/
+    volumes:
+      - ../backend:/app/
 
     
